@@ -30,6 +30,15 @@ pipeline {
 		}
 	  }
 	  
+    stage ('SAST') {
+      steps {
+        withSonarQubeEnv('Sonarqube') {
+          sh 'mvn sonar:sonar'
+          sh 'cat target/sonar/report-task.txt'
+         }
+        }
+       }
+	  
     stage ('Build'){
       steps {
      sh 'mvn clean package'
@@ -40,12 +49,18 @@ pipeline {
             steps {
            sshagent(['tomcat']) {
                 sh 'scp -o StrictHostKeyChecking=no target/*.war root@192.168.127.193:/prod/apache-tomcat-8.5.54/webapps/DevSecOps-SOC.war'
-              }      
+                sh 'docker build -t devsecops .'
+                sh 'docker save -o devsecops.tar devsecops'
+	     }      
            }       
     }
-  
-     
-	  
+      stage ('Deploy-To-Kubernetes') {
+            steps {
+	      sshagent(['ZAP']) {
+                   sh 'scp -o StrictHostKeyChecking=no *.tar root@192.168.127.227:/'
+		 }
+             }
+       
     stage ('DAST') {
       steps {
         sshagent(['ZAP']) {
