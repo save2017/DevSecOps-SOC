@@ -45,7 +45,7 @@ pipeline {
     }
     } 
     
-       stage ('Deploy-To-Tomcat') {
+    stage ('Deploy-To-Tomcat') {
             steps {
            sshagent(['tomcat']) {
                 sh 'scp -o StrictHostKeyChecking=no target/*.war root@192.168.127.193:/prod/apache-tomcat-8.5.54/webapps/DevSecOps-SOC.war'
@@ -53,21 +53,15 @@ pipeline {
                 sh 'docker save -o devsecops.tar devsecops'
 	     }      
            }       
-    }
-      stage ('Deploy-To-Kubernetes') {
+     }
+	  
+     stage ('Deploy-To-Kubernetes') {
             steps {
 	      sshagent(['ZAP']) {
                    sh 'scp -o StrictHostKeyChecking=no *.tar root@192.168.127.227:/'
 		 }
-             }
-       
-    stage ('DAST') {
-      steps {
-        sshagent(['ZAP']) {
-         sh 'ssh -o  StrictHostKeyChecking=no root@192.168.127.228 "docker run -t owasp/zap2docker-stable zap-baseline.py -t http://192.168.127.193:8080/webapp/" || true'
-        }
-      }
-    }
-	  
+            }
+       }   
+         
   }
 }
