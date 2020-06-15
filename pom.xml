@@ -13,6 +13,7 @@
 	<packaging>war</packaging>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>random-jokes-api</name>
+	<url>http://maven.apache.org</url>
 	<description>Demo project for Spring Boot</description>
 
 	<properties>
