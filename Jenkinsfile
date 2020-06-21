@@ -41,8 +41,6 @@ pipeline {
             steps {
            sshagent(['tomcat']) {
                 sh 'scp -o StrictHostKeyChecking=no target/*.war root@192.168.127.193:/prod/apache-tomcat-8.5.54/webapps/DevSecOps-SOC.war'
-                sh 'docker build -t devsecops .'
-                sh 'docker save -o devsecops.tar devsecops'
 	     }      
            }       
      }
